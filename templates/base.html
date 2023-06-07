@@ -24,21 +24,103 @@
         {% endif %}
 
         {# Global stylesheets #}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         {% block extra_css %}
         {# Override this in templates to add extra stylesheets #}
         {% endblock %}
     </head>
 
     <body class="{% block body_class %}{% endblock %}">
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <img src="{% static 'images/TunerGuy-logo.png' %}" width="100" height="100" class="d-inline-block align-top" alt="Logo">
+                <a class="navbar-brand" href=""><span style="color:#8C8C8C; font-weight:400; font-size:3em">Tuner</span><span style="color:#A7060C; font-weight:400; font-size:3em">Guy</span></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item active nav-item-spaced">
+                            <a class="nav-link" href="">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">MK7 GTI</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="">Fiesta ST</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">News</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Tech & Engineering</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Community Hub</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="">Logout</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="">Register</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                        <form class="d-flex my-2 my-lg-0" role="search" action="" method="get">
+                            <input class="form-control me-2" name="q" type="text" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        </form>
+                </div>
+            </div>
+        </nav>
         {% wagtailuserbar %}
 
         {% block content %}{% endblock %}
+        <div class="footer py-2 bg-light fixed-bottom text-center">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col d-none d-md-block">
+                        <h6 class="text-uppercase fw-bold mb-2">Navigation</h6>
+                    </div>
+                    <div class="col col d-none d-md-block">
+                        <h6 class="text-uppercase fw-bold mb-2">Newsletter</h6>
+                    </div>
+                    <div class="col col d-none d-md-block">
+                        <h6 class="text-uppercase fw-bold mb-2">Socials</h6>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-sm">
+                        <span class="text-muted">
+                            Home - MK7 GTI - Ford Fiesta ST
+                        </span>
+                    </div>
+                    <div class="col-sm">
+                        <form class="form-inline d-flex my-2 my-lg-0">
+                            <input class="form-control me-2" placeholder="name@email.com" aria-label="Subscribe">
+                            <button class="btn btn-outline-success" type="submit">Subscribe</button>
+                        </form>
+                    </div>
+                    <div class="col-sm">
+                        <img src="{% static 'images/social/insta.png' %}" width="50" height="50" alt="Instagram">
+                        <img src="{% static 'images/social/twitter.png' %}" width="50" height="50" alt="Twitter">
+                        <img src="{% static 'images/social/facebook.png' %}" width="50" height="50" alt="Facebook">
+                    </div>
+                </div>
+            </div>
+        </footer>
 
         {# Global javascript #}
-        <script type="text/javascript" src="{% static 'js/tunerguy.js' %}"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
         {% block extra_js %}
         {# Override this in templates to add extra javascript #}
         {% endblock %}

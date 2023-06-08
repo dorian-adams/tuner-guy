@@ -83,7 +83,10 @@
         </nav>
         {% wagtailuserbar %}
 
-        {% block content %}{% endblock %}
+        <main role="main" class="container-fluid">
+            {% block content %}{% endblock %}
+        </main>
+
         <div class="footer py-2 bg-light fixed-bottom text-center">
             <div class="container-fluid">
                 <div class="row">

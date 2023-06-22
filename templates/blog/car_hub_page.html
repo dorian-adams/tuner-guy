@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            {% if latest_post %}
+            {% image latest_post.featured_image scale-30 as featured_img %}
+                <div class="card mb-3">
+                    <img src="{{ featured_img.url }}" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ latest_post.title }}</h5>
+                        <p class="card-text">
+                            {{ latest_post.snippet }}
+                        </p>
+                    </div>
+                </div>
+            {% else %}
+                {% include 'blog/under_construction_card.html' %}
+            {% endif %}
+        </div>
+        <div class="col-sm-6">
+            <div class="row">
+                <h1>{{ page.title }}</h1>
+            </div>
+            <div class="row">
+                {{ page.intro|richtext }}
+            </div>
+        </div>
+    </div>
+    <hr />
+    <h2>Videos:</h2>
+    <div class="row">
+        {% for block in page.youtube_embeds %}
+            {% include_block block %}
+        {% endfor %}
+    </div>
+    <hr />
+    {% for element in posts_per_category %}
+    <div class="row">
+        <div class="col-lg-6">
+            <h2 class="mt-4">{{ element.category.title }}</h2>
+        </div>
+    </div>
+    <div class="row">
+            {% include "blog/article_list.html" with article_list=element.posts %}
+    </div>
+
+
+
+    {% endfor %}
+</div>
+{% endblock content %}

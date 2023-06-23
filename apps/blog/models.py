@@ -109,7 +109,7 @@ class CategoryPage(Page):
 
 
 class BlogPage(Page):
-    category = ParentalKey(
+    category = models.ForeignKey(
         CategoryPage,
         on_delete=models.CASCADE,
         related_name="category_posts",

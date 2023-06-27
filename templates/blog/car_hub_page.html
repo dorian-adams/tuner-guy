@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="container">
+    {# Intro section #}
     <div class="row">
         <div class="col-sm-6">
             {% if latest_post %}
@@ -17,7 +18,7 @@
                     </div>
                 </div>
             {% else %}
-                {% include 'blog/under_construction_card.html' %}
+                {% include 'blog/includes/under_construction_card.html' %}
             {% endif %}
         </div>
         <div class="col-sm-6">
@@ -30,6 +31,7 @@
         </div>
     </div>
     <hr />
+    {# Youtube section #}
     <h2>Videos:</h2>
     <div class="row">
         {% for block in page.youtube_embeds %}
@@ -37,6 +39,7 @@
         {% endfor %}
     </div>
     <hr />
+    {# Articles section #}
     {% for element in posts_per_category %}
     <div class="row">
         <div class="col-lg-6">
@@ -44,11 +47,22 @@
         </div>
     </div>
     <div class="row">
-            {% include "blog/article_list.html" with article_list=element.posts %}
+            {% include "blog/includes/article_list.html" with article_list=element.posts %}
     </div>
-
-
-
     {% endfor %}
+    {% if reddit_embeds %}
+        <hr />
+        {# Reddit section #}
+        <h2>{{ page.reddit_embeds.title }}</h2>
+        <div class="row">
+            {% include "blog/includes/reddit_post_embeds.html" with embeds=reddit_embeds %}
+        </div>
+    {% endif %}
 </div>
 {% endblock content %}
+{# JavaScript for the reddit embeds #}
+{% block extra_js %}
+    {% if reddit_embeds %}
+        <script async="" src="https://embed.reddit.com/widgets.js" charset="UTF-8"></script>
+    {% endif %}
+{% endblock %}

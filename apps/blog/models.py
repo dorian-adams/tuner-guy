@@ -2,8 +2,6 @@ from datetime import date
 
 from django.db import models
 from django.conf import settings
-from django.utils import timezone
-from django.db.models import Max
 from django.core.validators import MinLengthValidator
 
 from wagtail.models import Page
@@ -15,7 +13,9 @@ from taggit.models import TaggedItemBase
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalKey
 
+from .validators import validate_subreddit_exists, validate_subreddit_format
 from apps.base.blocks import FeaturedContentBlock, YoutubeEmbedBlock
+from apps.base.reddit_api import get_reddit_posts
 
 
 class BlogIndexPage(Page):
@@ -55,10 +55,18 @@ class CarHubPage(Page):
         use_json_field=True,
         null=True,
     )
+    reddit_embeds = models.ForeignKey(
+        "blog.RedditEmbed",
+        blank=True,
+        null=True,
+        related_name="+",
+        on_delete=models.CASCADE,
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel("intro"),
         FieldPanel("youtube_embeds"),
+        FieldPanel("reddit_embeds"),
     ]
 
     parent_page_types = ["BlogIndexPage"]
@@ -88,6 +96,9 @@ class CarHubPage(Page):
             for category in categories
         ]
         context["latest_post"] = latest_post
+        context["reddit_embeds"] = (
+            self.reddit_embeds.embed_codes if self.reddit_embeds else []
+        )
 
         return context
 
@@ -111,10 +122,10 @@ class CategoryPage(Page):
 class BlogPage(Page):
     category = models.ForeignKey(
         CategoryPage,
-        on_delete=models.CASCADE,
-        related_name="category_posts",
         blank=True,
         null=True,
+        related_name="category_posts",
+        on_delete=models.CASCADE,
     )
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -179,17 +190,20 @@ class BlogPageTag(TaggedItemBase):
     )
 
 
+@register_snippet
 class BlogComment(models.Model):
     page = ParentalKey(
-        "BlogPage", on_delete=models.CASCADE, related_name="page_comments"
+        "BlogPage",
+        related_name="page_comments",
+        on_delete=models.CASCADE,
     )
     text = models.TextField(
         validators=[MinLengthValidator(3, "Comment must be greater than 3 characters.")]
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
         related_name="comment_author",
+        on_delete=models.PROTECT,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -201,3 +215,31 @@ class BlogComment(models.Model):
         FieldPanel("user"),
         FieldPanel("is_approved"),
     ]
+
+
+@register_snippet
+class RedditEmbed(models.Model):
+    title = models.CharField(max_length=20)
+    subreddit = models.CharField(
+        max_length=15, validators=[validate_subreddit_format, validate_subreddit_exists]
+    )
+    last_updated = models.DateField(blank=True, null=True)
+    _embed_codes = models.TextField(blank=True, null=True)
+
+    panels = [
+        FieldPanel("title"),
+        FieldPanel("subreddit"),
+    ]
+
+    @property
+    def embed_codes(self):
+        return self._embed_codes.split("|")
+
+    @embed_codes.setter
+    def embed_codes(self, values):
+        self._embed_codes = "|".join(values)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.embed_codes = get_reddit_posts(self.subreddit)
+        return super().save(*args, **kwargs)

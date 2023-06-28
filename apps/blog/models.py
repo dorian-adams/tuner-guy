@@ -18,6 +18,44 @@ from apps.base.blocks import FeaturedContentBlock, YoutubeEmbedBlock
 from apps.base.reddit_api import get_reddit_posts
 
 
+# -----------------------------------------------------------------------------
+# Abstract Models
+# -----------------------------------------------------------------------------
+
+
+class BaseCategory(Page):
+    """
+    Represents a base category page within the application.
+
+    Attributes:
+        intro (RichTextField): The introductory text for the category page.
+        youtube_embeds (StreamField): A stream field for adding YouTube embeds.
+
+    Usage:
+        ``BaseCategory`` serves as a base class for creating category pages.
+    """
+
+    intro = RichTextField()
+    youtube_embeds = StreamField(
+        [
+            (
+                "Youtube",
+                YoutubeEmbedBlock(),
+            )
+        ],
+        use_json_field=True,
+        null=True,
+    )
+
+    class Meta:
+        abstract = True
+
+
+# -----------------------------------------------------------------------------
+# Concrete Models
+# -----------------------------------------------------------------------------
+
+
 class BlogIndexPage(Page):
     """
     Homepage.
@@ -43,18 +81,25 @@ class BlogIndexPage(Page):
     subpage_types = ["CarHubPage", "CategoryPage"]
 
 
-class CarHubPage(Page):
-    intro = RichTextField()
-    youtube_embeds = StreamField(
-        [
-            (
-                "Youtube",
-                YoutubeEmbedBlock(),
-            )
-        ],
-        use_json_field=True,
-        null=True,
-    )
+class CarHubPage(BaseCategory):
+    """
+    Represents a type of Category Page for a specific car.
+
+    Hierarchy example: www.TunerGuy.com/Fiesta-ST/
+
+    Attributes:
+        reddit_embeds (ForeignKey): A foreign key relationship to a RedditEmbed instance
+            representing the Reddit embeds associated with the ``CarHubPage``.
+
+    Usage:
+        Create a content hub for a specific car. Store all categories, posts, reddit/youtube
+        embeds related to the car.
+
+        Note:
+        - The parent page must be a BlogIndexPage.
+        - The subpage must be a CategoryPage.
+    """
+
     reddit_embeds = models.ForeignKey(
         "blog.RedditEmbed",
         blank=True,
@@ -103,8 +148,7 @@ class CarHubPage(Page):
         return context
 
 
-class CategoryPage(Page):
-    intro = RichTextField()
+class CategoryPage(BaseCategory):
     has_latest_post = models.BooleanField(default=False)
 
     parent_page_types = ["BlogIndexPage", "CarHubPage"]
@@ -192,6 +236,19 @@ class BlogPageTag(TaggedItemBase):
 
 @register_snippet
 class BlogComment(models.Model):
+    """
+    Represents a comment on a ``BlogPage``.
+
+    Attributes:
+        page (ParentalKey): The blog page associated with the comment.
+        text (TextField): The content of the comment.
+        user (ForeignKey): The user who posted the comment.
+        created_at (DateTimeField): The date and time when the comment was created.
+        updated_at (DateTimeField): The date and time when the comment was last updated.
+        is_approved (BooleanField): Indicates whether the comment is approved or not.
+            Comments are not displayed on the Blog Page until approved.
+    """
+
     page = ParentalKey(
         "BlogPage",
         related_name="page_comments",
@@ -219,11 +276,31 @@ class BlogComment(models.Model):
 
 @register_snippet
 class RedditEmbed(models.Model):
+    """
+    Represents a Reddit embed snippet used on ``CategoryPage`` and ``CarHubPage``.
+
+    Uses function, ``get_reddit_posts``, to get and store the embed code
+    for two reddit posts.
+
+    Attributes:
+        title (CharField): The title or name of the embed.
+        subreddit (CharField): The subreddit associated with the embed.
+            As "mysubreddit". Not "/r/mysubreddit". This should be provided without
+            the "/r/" prefix, only the subreddit name.
+        _embed_codes (TextField): Stores the embed codes as a delimited string.
+
+    Properties:
+        - embed_codes (list): Returns the embed codes as a list.
+
+    Methods:
+        - save(*args, **kwargs): Overrides the default save method to fetch and store
+          the top Reddit posts for the specified subreddit upon creation.
+    """
+
     title = models.CharField(max_length=20)
     subreddit = models.CharField(
         max_length=15, validators=[validate_subreddit_format, validate_subreddit_exists]
     )
-    last_updated = models.DateField(blank=True, null=True)
     _embed_codes = models.TextField(blank=True, null=True)
 
     panels = [
@@ -233,13 +310,16 @@ class RedditEmbed(models.Model):
 
     @property
     def embed_codes(self):
+        """Return embed codes as a list."""
         return self._embed_codes.split("|")
 
     @embed_codes.setter
     def embed_codes(self, values):
+        """Join embed codes to store as a TextField."""
         self._embed_codes = "|".join(values)
 
     def save(self, *args, **kwargs):
+        """If creation - get the top reddit posts for the ``subreddit``."""
         if not self.pk:
             self.embed_codes = get_reddit_posts(self.subreddit)
         return super().save(*args, **kwargs)

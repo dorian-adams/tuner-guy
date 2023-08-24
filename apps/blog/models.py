@@ -117,6 +117,27 @@ class CarHubPage(BaseCategory):
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request)
 
+        blog_page_query = (
+            BlogPage.objects.select_related(
+                "author",
+            )
+            .live()
+            .only(
+                "slug",
+                "snippet",
+                "title",
+                "date",
+                "featured_image",
+                "id",
+                "author__first_name",
+                "author__last_name",
+                "url_path",
+                "page_ptr_id",
+                "category_id",
+            )
+            .order_by("-date")[:3]
+        )
+
         categories = (
             CategoryPage.objects.descendant_of(self)
             .live()
@@ -125,24 +146,7 @@ class CarHubPage(BaseCategory):
             .prefetch_related(
                 Prefetch(
                     "category_posts",
-                    queryset=BlogPage.objects.select_related(
-                        "author",
-                    )
-                    .live()
-                    .only(
-                        "slug",
-                        "snippet",
-                        "title",
-                        "date",
-                        "featured_image",
-                        "id",
-                        "author__first_name",
-                        "author__last_name",
-                        "url_path",
-                        "page_ptr_id",
-                        "category_id",
-                    )
-                    .order_by("-date")[:3],
+                    queryset=blog_page_query,
                     to_attr="posts",
                 )
             )

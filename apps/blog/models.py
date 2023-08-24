@@ -3,6 +3,7 @@ from datetime import date
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinLengthValidator
+from django.db.models import Prefetch
 
 from wagtail.models import Page
 from wagtail.fields import StreamField, RichTextField
@@ -94,10 +95,6 @@ class CarHubPage(BaseCategory):
     Usage:
         Create a content hub for a specific car. Store all categories, posts, reddit/youtube
         embeds related to the car.
-
-        Note:
-        - The parent page must be a BlogIndexPage.
-        - The subpage must be a CategoryPage.
     """
 
     reddit_embeds = models.ForeignKey(
@@ -119,37 +116,45 @@ class CarHubPage(BaseCategory):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request)
-        categories = CategoryPage.objects.descendant_of(self).prefetch_related(
-            "category_posts"
+
+        categories = (
+            CategoryPage.objects.descendant_of(self)
+            .live()
+            .order_by("-date_of_last_post")
+            .only("title", "page_ptr_id", "id")
+            .prefetch_related(
+                Prefetch(
+                    "category_posts",
+                    queryset=BlogPage.objects.select_related(
+                        "author",
+                    )
+                    .live()
+                    .only(
+                        "slug",
+                        "snippet",
+                        "title",
+                        "date",
+                        "featured_image",
+                        "id",
+                        "author__first_name",
+                        "author__last_name",
+                        "url_path",
+                        "page_ptr_id",
+                        "category_id",
+                    )
+                    .order_by("-date")[:3],
+                    to_attr="posts",
+                )
+            )
         )
 
-        category_with_latest_post = categories.filter(has_latest_post=True).first()
-
-        latest_post = (
-            category_with_latest_post.category_posts.first()
-            if category_with_latest_post
-            else None
-        )
-
-        context["posts_per_category"] = [
-            {
-                "category": category,
-                "posts": category.category_posts.exclude(
-                    pk=latest_post.pk
-                ).select_related("featured_image", "author")[:3],
-            }
-            for category in categories
-        ]
-        context["latest_post"] = latest_post
-        context["reddit_embeds"] = (
-            self.reddit_embeds.embed_codes if self.reddit_embeds else []
-        )
+        context["categories"] = categories
 
         return context
 
 
 class CategoryPage(BaseCategory):
-    has_latest_post = models.BooleanField(default=False)
+    date_of_last_post = models.DateField(null=True, blank=True)
 
     parent_page_types = ["BlogIndexPage", "CarHubPage"]
     subpage_types = ["BlogPage"]
@@ -160,6 +165,27 @@ class CategoryPage(BaseCategory):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request)
+
+        posts = (
+            BlogPage.objects.descendant_of(self)
+            .live()
+            .order_by("-date")
+            .values(
+                "featured_image",
+                "title",
+                "snippet",
+                "date",
+                "slug",
+                "id",
+                "author__first_name",
+                "author__last_name",
+                "url_path",
+            )
+        )
+
+        context["latest_post"] = posts[0]
+        context["posts"] = posts[1::]
+
         return context
 
 
@@ -206,20 +232,9 @@ class BlogPage(Page):
 
     def save(self, clean=True, user=None, log_action=False, **kwargs):
         parent_category = self.get_parent().specific
+        parent_category.date_of_last_post = date.today()
         self.category = parent_category
-
-        latest_category = (
-            CategoryPage.objects.sibling_of(parent_category)
-            .filter(has_latest_post=True)
-            .first()
-        )
-
-        if parent_category.pk != getattr(latest_category, "pk", None):
-            parent_category.has_latest_post = True
-            parent_category.save()
-            if latest_category is not None:
-                latest_category.has_latest_post = False
-                latest_category.save()
+        parent_category.save()
 
         return super().save(clean, user, log_action, **kwargs)
 

@@ -8,7 +8,7 @@
         <div class="col-sm-6">
             {% if latest_post %}
                 <div class="card mb-3">
-                    <img src="" class="card-img-top" alt="">
+                    <img src="{{ featured_img.url }}" class="card-img-top" alt="">
                     <div class="card-body">
                         <h5 class="card-title">{{ latest_post.title }}</h5>
                         <p class="card-text">
@@ -39,16 +39,14 @@
     </div>
     <hr />
     {# Articles section #}
-    {% for category in categories %}
-        <div class="row">
-            <div class="col-lg-6">
-                <h2 class="mt-4">{{ category.title }}</h2>
-            </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <h2 class="mt-4">Title</h2>
         </div>
-        <div class="row">
-                {% include "blog/includes/article_list.html" with article_list=category.posts %}
-        </div>
-    {% endfor %}
+    </div>
+    <div class="row">
+            {% include "blog/includes/article_list.html" with article_list=posts %}
+    </div>
     {% if reddit_embeds %}
         <hr />
         {# Reddit section #}

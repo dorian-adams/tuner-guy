@@ -123,12 +123,10 @@ class CarHubPage(BaseCategory):
             )
             .live()
             .only(
-                "slug",
                 "snippet",
                 "title",
                 "date",
                 "featured_image",
-                "id",
                 "author__first_name",
                 "author__last_name",
                 "url_path",
@@ -142,7 +140,7 @@ class CarHubPage(BaseCategory):
             CategoryPage.objects.descendant_of(self)
             .live()
             .order_by("-date_of_last_post")
-            .only("title", "page_ptr_id", "id")
+            .only("title", "url_path")
             .prefetch_related(
                 Prefetch(
                     "category_posts",
@@ -153,6 +151,9 @@ class CarHubPage(BaseCategory):
         )
 
         context["categories"] = categories
+        context["reddit_embeds"] = (
+            self.reddit_embeds.embed_codes if self.reddit_embeds else []
+        )
 
         return context
 

@@ -42,11 +42,16 @@
     {% for category in categories %}
         <div class="row">
             <div class="col-lg-6">
-                <h2 class="mt-4">{{ category.title }}</h2>
+                <h2 class="mt-4">
+                    <p><a href="{{ category.url_path }}" class="text-decoration-none text-dark">{{ category.title }}</a></p>
+                </h2>
             </div>
         </div>
         <div class="row">
                 {% include "blog/includes/article_list.html" with article_list=category.posts %}
+        </div>
+        <div class="row">
+            <a href="{{ category.url_path }}"><b>View More »</b></a>
         </div>
     {% endfor %}
     {% if reddit_embeds %}

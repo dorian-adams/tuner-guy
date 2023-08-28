@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags wagtailimages_tags %}
+{% load static wagtailcore_tags %}
 
 {% for post in article_list %}
     <div class="col-xl-4 col-md-6 mb-5">
@@ -6,7 +6,7 @@
             <div class="position-relative overflow-hidden">
                 <a href="{{ post.url_path }}" class="d-block">
                     
-                    <img alt="blog post thumbnail" src="{{ featured_thumbnail.url }}" class="card-img-top">
+                    <img alt="blog post thumbnail" src="{{ post.featured_image.url }}" class="card-img-top" style="object-fit: cover;">
                 </a>
             </div>
             <div class="card-body py-4">

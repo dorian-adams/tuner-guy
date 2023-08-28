@@ -211,10 +211,7 @@ class BlogPage(Page):
         max_length=200,
         help_text="Excerpt used in the article's preview card.",
     )
-    featured_image = models.ForeignKey(
-        "wagtailimages.Image",
-        on_delete=models.CASCADE,
-    )
+    featured_image = models.ImageField(upload_to="featured_image/%Y/%m/%d/")
     tags = ClusterTaggableManager(through="BlogPageTag", blank=True)
     body = RichTextField()
 

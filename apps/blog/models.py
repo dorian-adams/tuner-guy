@@ -333,13 +333,12 @@ class RedditEmbed(models.Model):
         """Return embed codes as a list."""
         return self._embed_codes.split("|")
 
-    @embed_codes.setter
-    def embed_codes(self, values):
-        """Join embed codes to store as a TextField."""
-        self._embed_codes = "|".join(values)
+    def update_embedded_posts(self):
+        embeds = get_reddit_posts(self.subreddit)
+        self._embed_codes = "|".join(embeds)
 
     def save(self, *args, **kwargs):
         """If creation - get the top reddit posts for the ``subreddit``."""
         if not self.pk:
-            self.embed_codes = get_reddit_posts(self.subreddit)
+            self.update_embedded_posts()
         return super().save(*args, **kwargs)

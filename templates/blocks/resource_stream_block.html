@@ -1,0 +1,19 @@
+<div class="container">
+    {% for block in self %}
+        <b>{{ block.value.title }}</b>
+        <div class="row">
+            <div class="container">
+                <p>
+                    {% for resource in block.value.urls %}
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center {% cycle 'list-group-item-dark' '' %}">
+                                <a href="{{ resource.url }}">{{ resource.anchor }}</a>
+                                <span class="badge bg-primary rounded-pill">{{ resource.type }}</span>
+                            </li>
+                        </ul>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+</div>

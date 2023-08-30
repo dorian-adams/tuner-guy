@@ -34,3 +34,30 @@ class YoutubeEmbedBlock(blocks.StructBlock):
     class Meta:
         max_num = min_num = 4
         template = "blocks/youtube_embed_block.html"
+
+
+class ResourceURLBlock(blocks.StructBlock):
+    url = blocks.URLBlock()
+    anchor = blocks.CharBlock(max_length=40)
+    type = blocks.ChoiceBlock(
+        choices=[
+            ("TunerGuy", "TunerGuy"),
+            ("YouTube", "YouTube"),
+            ("Forums", "Foruns"),
+            ("Social", "Social Media"),
+            ("Article", "Article"),
+            ("Magazine", "Magazine"),
+        ],
+    )
+
+
+class ResourceCategoryBlock(blocks.StructBlock):
+    title = blocks.CharBlock(max_length=40)
+    urls = blocks.ListBlock(ResourceURLBlock())
+
+
+class ResourceStreamBlock(blocks.StreamBlock):
+    resources = ResourceCategoryBlock()
+
+    class Meta:
+        template = "blocks/resource_stream_block.html"

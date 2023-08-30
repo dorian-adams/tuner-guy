@@ -62,6 +62,11 @@
             {% include "blog/includes/reddit_post_embeds.html" with embeds=reddit_embeds %}
         </div>
     {% endif %}
+    <hr />
+    <h2>Resources:</h2>
+    <div class="row">
+        {{ page.resource_list }}
+    </div>
 </div>
 {% endblock content %}
 {# JavaScript for the reddit embeds #}

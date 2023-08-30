@@ -15,7 +15,11 @@ from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalKey
 
 from .validators import validate_subreddit_exists, validate_subreddit_format
-from apps.base.blocks import FeaturedContentBlock, YoutubeEmbedBlock
+from apps.base.blocks import (
+    FeaturedContentBlock,
+    YoutubeEmbedBlock,
+    ResourceStreamBlock,
+)
 from apps.base.reddit_api import get_reddit_posts
 
 
@@ -45,6 +49,12 @@ class BaseCategory(Page):
             )
         ],
         use_json_field=True,
+        null=True,
+    )
+    resource_list = StreamField(
+        ResourceStreamBlock(),
+        use_json_field=True,
+        blank=True,
         null=True,
     )
 
@@ -109,6 +119,7 @@ class CarHubPage(BaseCategory):
         FieldPanel("intro"),
         FieldPanel("youtube_embeds"),
         FieldPanel("reddit_embeds"),
+        FieldPanel("resource_list"),
     ]
 
     parent_page_types = ["BlogIndexPage"]

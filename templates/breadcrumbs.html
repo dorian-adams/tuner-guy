@@ -1,0 +1,17 @@
+<nav aria-label="breadcrumb" class="bg-dark p-3 d-flex" style="border-top: .35rem solid #fc0000 ;">
+    <div class="container">
+        {# source: https://gist.github.com/VincentLoy/e693aa1f149a59f465a5a71b6d937b9a #}
+        <ol class="breadcrumb fs-3 text-uppercase text-white mb-0">
+            {% for p in self.get_ancestors %}
+                {% if p.is_root == False %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ p.url }}" class="text-decoration-none text-white">{{ p.title }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <li class="breadcrumb-item active" aria-content="page">
+                {{ page.title }}
+            </li>
+        </ol>
+    </div>
+</nav>

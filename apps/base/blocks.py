@@ -1,6 +1,7 @@
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.embeds.blocks import EmbedBlock
+
+from .validators import validate_youtube_embed, validate_youtube_channel
 
 
 class FeaturedContentBlock(blocks.StructBlock):
@@ -10,7 +11,7 @@ class FeaturedContentBlock(blocks.StructBlock):
 
     title = blocks.CharBlock(max_length=20)
     description = blocks.CharBlock(max_length=80)
-    url = blocks.URLBlock()
+    url = blocks.URLBlock(label="Page URL")
     image = ImageChooserBlock()
 
     class Meta:
@@ -22,23 +23,29 @@ class YoutubeEmbedBlock(blocks.StructBlock):
     Represents a block for embedding YouTube videos (block of 4).
 
     Attributes:
-        youtube_link (EmbedBlock): The embedded YouTube video link.
-        source_name (CharBlock): The name of the YouTube channel.
-        source_url (URLBlock): The URL to the YouTube channel for citation purposes.
+        video (URLBlock): The YouTube video embed link. Must contain '/embed/'.
+        channel_name (CharBlock): The name of the YouTube channel.
+        channel_url (URLBlock): The URL to the YouTube channel for citation purposes.
     """
 
-    youtube_link = EmbedBlock(max_width=520, max_height=350)
-    source_name = blocks.CharBlock()
-    source_url = blocks.URLBlock()
+    video = blocks.URLBlock(
+        validators=[validate_youtube_embed], help_text="Must be a YouTube embed URL."
+    )
+    channel_name = blocks.CharBlock()
+    channel_url = blocks.URLBlock(
+        validators=[validate_youtube_channel],
+        help_text="e.g. https://www.youtube.com/@ChannelName",
+        label="Channel URL",
+    )
 
     class Meta:
-        max_num = min_num = 4
+        icon = "media"
         template = "blocks/youtube_embed_block.html"
 
 
 class ResourceURLBlock(blocks.StructBlock):
-    url = blocks.URLBlock()
-    anchor = blocks.CharBlock(max_length=40)
+    url = blocks.URLBlock(help_text="External or internal URL.")
+    anchor = blocks.CharBlock(label="Anchor text", max_length=40)
     type = blocks.ChoiceBlock(
         choices=[
             ("TunerGuy", "TunerGuy"),
@@ -57,7 +64,50 @@ class ResourceCategoryBlock(blocks.StructBlock):
 
 
 class ResourceStreamBlock(blocks.StreamBlock):
-    resources = ResourceCategoryBlock()
+    resources = ResourceCategoryBlock(icon="clipboard-list")
 
     class Meta:
         template = "blocks/resource_stream_block.html"
+
+
+class ImageBlock(blocks.StructBlock):
+    image = ImageChooserBlock()
+    caption = blocks.CharBlock(max_length=100, required=False)
+
+    class Meta:
+        icon = "image"
+        template = "blocks/image_block.html"
+
+
+class HeadingBlock(blocks.StructBlock):
+    heading_text = blocks.CharBlock(classname="title")
+    size = blocks.ChoiceBlock(
+        choices=[
+            ("", "Select a Header size"),
+            ("h2", "H2"),
+            ("h3", "H3"),
+        ],
+        blank=True,
+        required=False,
+    )
+
+    class Meta:
+        icon = "title"
+        template = "blocks/heading_block.html"
+
+
+class QuoteBlock(blocks.StructBlock):
+    quote_text = blocks.TextBlock()
+    attribute_name = blocks.CharBlock(blank=True, required=False)
+
+    class Meta:
+        icon = "openquote"
+        template = "blocks/quote_block.html"
+
+
+class ContentStreamBlock(blocks.StreamBlock):
+    heading_block = HeadingBlock()
+    paragraph_block = blocks.RichTextBlock(template="blocks/paragraph_block.html")
+    image_block = ImageBlock()
+    quote_block = QuoteBlock(required=False)
+    youtube_embed_block = YoutubeEmbedBlock(required=False)

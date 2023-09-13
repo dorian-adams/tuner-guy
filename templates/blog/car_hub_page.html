@@ -2,7 +2,7 @@
 {% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-<div class="container">
+<div class="container mt-4">
     {# Intro section #}
     <div class="row">
         <div class="col-sm-6">
@@ -34,7 +34,9 @@
     <h2>Videos:</h2>
     <div class="row">
         {% for block in page.youtube_embeds %}
+        <div class="col-md-6">
             {% include_block block %}
+        </div>
         {% endfor %}
     </div>
     <hr />

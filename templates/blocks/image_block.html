@@ -1,0 +1,7 @@
+{% load wagtailimages_tags %}
+<figure class="figure">
+    {% image self.image original loading="lazy" class="figure-img img-fluid" alt=self.caption %}
+    <figcaption class="fig-caption text-muted">
+        {{ self.caption }}
+    </figcaption>
+</figure>

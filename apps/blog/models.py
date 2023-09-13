@@ -19,6 +19,7 @@ from apps.base.blocks import (
     FeaturedContentBlock,
     YoutubeEmbedBlock,
     ResourceStreamBlock,
+    ContentStreamBlock,
 )
 from apps.base.reddit_api import get_reddit_posts
 
@@ -224,7 +225,7 @@ class BlogPage(Page):
     )
     featured_image = models.ImageField(upload_to="featured_image/%Y/%m/%d/")
     tags = ClusterTaggableManager(through="BlogPageTag", blank=True)
-    body = RichTextField()
+    body = StreamField(ContentStreamBlock(), use_json_field=True)
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
@@ -350,3 +351,6 @@ class RedditEmbed(models.Model):
         if not self.pk:
             self.update_embedded_posts()
         return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.subreddit

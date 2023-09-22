@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('blog', '0031_remove_categorypage_has_latest_post_and_more'),
+        ("blog", "0031_remove_categorypage_has_latest_post_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='categorypage',
-            name='date_of_last_post',
+            model_name="categorypage",
+            name="date_of_last_post",
             field=models.DateField(blank=True, null=True),
         ),
     ]

@@ -1,7 +1,7 @@
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 
-from .validators import validate_youtube_embed, validate_youtube_channel
+from .validators import validate_youtube_channel, validate_youtube_embed
 
 
 class FeaturedContentBlock(blocks.StructBlock):
@@ -29,7 +29,8 @@ class YoutubeEmbedBlock(blocks.StructBlock):
     """
 
     video = blocks.URLBlock(
-        validators=[validate_youtube_embed], help_text="Must be a YouTube embed URL."
+        validators=[validate_youtube_embed],
+        help_text="Must be a YouTube embed URL.",
     )
     channel_name = blocks.CharBlock()
     channel_url = blocks.URLBlock(
@@ -107,7 +108,9 @@ class QuoteBlock(blocks.StructBlock):
 
 class ContentStreamBlock(blocks.StreamBlock):
     heading_block = HeadingBlock()
-    paragraph_block = blocks.RichTextBlock(template="blocks/paragraph_block.html")
+    paragraph_block = blocks.RichTextBlock(
+        template="blocks/paragraph_block.html"
+    )
     image_block = ImageBlock()
     quote_block = QuoteBlock(required=False)
     youtube_embed_block = YoutubeEmbedBlock(required=False)

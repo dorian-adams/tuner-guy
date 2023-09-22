@@ -1,28 +1,26 @@
 from datetime import date
 
-from django.db import models
 from django.conf import settings
 from django.core.validators import MinLengthValidator
+from django.db import models
 from django.db.models import Prefetch
-
-from wagtail.models import Page
-from wagtail.fields import StreamField, RichTextField
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.snippets.models import register_snippet
-
-from taggit.models import TaggedItemBase
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalKey
+from taggit.models import TaggedItemBase
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Page
+from wagtail.snippets.models import register_snippet
 
-from .validators import validate_subreddit_exists, validate_subreddit_format
 from apps.base.blocks import (
-    FeaturedContentBlock,
-    YoutubeEmbedBlock,
-    ResourceStreamBlock,
     ContentStreamBlock,
+    FeaturedContentBlock,
+    ResourceStreamBlock,
+    YoutubeEmbedBlock,
 )
 from apps.base.reddit_api import get_reddit_posts
 
+from .validators import validate_subreddit_exists, validate_subreddit_format
 
 # -----------------------------------------------------------------------------
 # Abstract Models
@@ -284,7 +282,9 @@ class BlogComment(models.Model):
         on_delete=models.CASCADE,
     )
     text = models.TextField(
-        validators=[MinLengthValidator(3, "Comment must be greater than 3 characters.")]
+        validators=[
+            MinLengthValidator(3, "Comment must be greater than 3 characters.")
+        ]
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -328,7 +328,8 @@ class RedditEmbed(models.Model):
 
     title = models.CharField(max_length=20)
     subreddit = models.CharField(
-        max_length=15, validators=[validate_subreddit_format, validate_subreddit_exists]
+        max_length=15,
+        validators=[validate_subreddit_format, validate_subreddit_exists],
     )
     _embed_codes = models.TextField(blank=True, null=True)
 

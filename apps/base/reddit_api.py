@@ -12,8 +12,8 @@ Module Functions:
 """
 
 import os
-import praw
 
+import praw
 from prawcore.exceptions import NotFound
 
 

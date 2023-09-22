@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('blog', '0016_blogpage_category'),
+        ("blog", "0016_blogpage_category"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='categorypage',
-            name='last_updated',
+            model_name="categorypage",
+            name="last_updated",
             field=models.DateField(blank=True, null=True),
         ),
     ]

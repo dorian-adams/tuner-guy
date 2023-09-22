@@ -4,19 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('blog', '0018_alter_blogpage_category'),
+        ("blog", "0018_alter_blogpage_category"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='categorypage',
-            name='last_updated',
+            model_name="categorypage",
+            name="last_updated",
         ),
         migrations.AddField(
-            model_name='categorypage',
-            name='has_latest_post',
+            model_name="categorypage",
+            name="has_latest_post",
             field=models.BooleanField(default=False),
         ),
     ]

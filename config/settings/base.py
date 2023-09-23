@@ -23,9 +23,8 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
-    "apps.base",
-    "apps.blog",
-    "apps.search",
+    "tunerguy.base",
+    "tunerguy.blog",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -58,13 +57,13 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
-ROOT_URLCONF = "tunerguy.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            BASE_DIR + "/templates/",
+            BASE_DIR + "/tunerguy/templates/",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -78,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "tunerguy.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database

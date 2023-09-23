@@ -1,5 +1,5 @@
-from apps.blog.models import RedditEmbed
-from tunerguy.celery import app
+from config.celery import app
+from tunerguy.blog.models import RedditEmbed
 
 
 @app.task

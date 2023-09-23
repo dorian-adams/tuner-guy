@@ -12,13 +12,13 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page
 from wagtail.snippets.models import register_snippet
 
-from apps.base.blocks import (
+from tunerguy.base.blocks import (
     ContentStreamBlock,
     FeaturedContentBlock,
     ResourceStreamBlock,
     YoutubeEmbedBlock,
 )
-from apps.base.reddit_api import get_reddit_posts
+from tunerguy.base.reddit_api import get_reddit_posts
 
 from .validators import validate_subreddit_exists, validate_subreddit_format
 

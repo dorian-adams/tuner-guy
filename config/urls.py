@@ -5,7 +5,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-from apps.search import views as search_views
+from tunerguy.search import views as search_views
 
 urlpatterns = [
     path("django-admin/", admin.site.urls),

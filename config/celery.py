@@ -17,7 +17,7 @@ app.autodiscover_tasks()
 # https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html
 @app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
-    from apps.blog.tasks import update_reddit
+    from tunerguy.apps.blog.tasks import update_reddit
 
     # Update all RedditEmbed's with the latest posts from their respective subreddit's.
     sender.add_periodic_task(

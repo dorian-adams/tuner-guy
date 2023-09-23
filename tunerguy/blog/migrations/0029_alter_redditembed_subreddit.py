@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 
-import apps.blog.validators
+import tunerguy.blog.validators
 
 
 class Migration(migrations.Migration):
@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
             field=models.CharField(
                 max_length=15,
                 validators=[
-                    apps.blog.validators.validate_subreddit_format,
-                    apps.blog.validators.validate_subreddit_exists,
+                    tunerguy.blog.validators.validate_subreddit_format,
+                    tunerguy.blog.validators.validate_subreddit_exists,
                 ],
             ),
         ),

@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 
-from apps.base.reddit_api import subreddit_found
+from tunerguy.base.reddit_api import subreddit_found
 
 
 def validate_subreddit_format(subreddit):

@@ -5,7 +5,7 @@ import wagtail.fields
 import wagtail.images.blocks
 from django.db import migrations
 
-import apps.base.validators
+import tunerguy.base.validators
 
 
 class Migration(migrations.Migration):
@@ -124,7 +124,7 @@ class Migration(migrations.Migration):
                                     wagtail.blocks.URLBlock(
                                         help_text="Must be a YouTube embed URL.",
                                         validators=[
-                                            apps.base.validators.validate_youtube_embed
+                                            tunerguy.base.validators.validate_youtube_embed
                                         ],
                                     ),
                                 ),
@@ -135,7 +135,7 @@ class Migration(migrations.Migration):
                                         help_text="e.g. https://www.youtube.com/@ChannelName",
                                         label="Channel URL",
                                         validators=[
-                                            apps.base.validators.validate_youtube_channel
+                                            tunerguy.base.validators.validate_youtube_channel
                                         ],
                                     ),
                                 ),
@@ -237,7 +237,7 @@ class Migration(migrations.Migration):
                                     wagtail.blocks.URLBlock(
                                         help_text="Must be a YouTube embed URL.",
                                         validators=[
-                                            apps.base.validators.validate_youtube_embed
+                                            tunerguy.base.validators.validate_youtube_embed
                                         ],
                                     ),
                                 ),
@@ -248,7 +248,7 @@ class Migration(migrations.Migration):
                                         help_text="e.g. https://www.youtube.com/@ChannelName",
                                         label="Channel URL",
                                         validators=[
-                                            apps.base.validators.validate_youtube_channel
+                                            tunerguy.base.validators.validate_youtube_channel
                                         ],
                                     ),
                                 ),
@@ -350,7 +350,7 @@ class Migration(migrations.Migration):
                                     wagtail.blocks.URLBlock(
                                         help_text="Must be a YouTube embed URL.",
                                         validators=[
-                                            apps.base.validators.validate_youtube_embed
+                                            tunerguy.base.validators.validate_youtube_embed
                                         ],
                                     ),
                                 ),
@@ -361,7 +361,7 @@ class Migration(migrations.Migration):
                                         help_text="e.g. https://www.youtube.com/@ChannelName",
                                         label="Channel URL",
                                         validators=[
-                                            apps.base.validators.validate_youtube_channel
+                                            tunerguy.base.validators.validate_youtube_channel
                                         ],
                                     ),
                                 ),

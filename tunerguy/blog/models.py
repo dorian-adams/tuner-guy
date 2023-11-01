@@ -183,18 +183,21 @@ class CategoryPage(BaseCategory):
 
         posts = (
             BlogPage.objects.descendant_of(self)
+            .select_related(
+                "author",
+            )
             .live()
             .order_by("-date")
-            .values(
-                "featured_image",
-                "title",
+            .only(
                 "snippet",
+                "title",
                 "date",
-                "slug",
-                "id",
+                "featured_image",
                 "author__first_name",
                 "author__last_name",
                 "url_path",
+                "page_ptr_id",
+                "category_id",
             )
         )
 
